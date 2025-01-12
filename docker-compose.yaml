@@ -1,0 +1,12 @@
+version: "3.8"
+
+services:
+  mylink-mock:
+    image: mylinkmock:1.0.0
+    hostname: mylinkmock
+    ports:
+      - "81:81"
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    network_mode: bridge
