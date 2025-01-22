@@ -22,13 +22,13 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-log4j2'
 
     implementation group: 'org.apache.poi', name: 'poi', version: '5.2.4'
     implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '5.2.4'
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.13.0'
-    implementation group: 'org.slf4j', name: 'slf4j-reload4j', version: '2.0.9'
-    implementation 'org.projectlombok:lombok'
-
+    compileOnly 'org.projectlombok:lombok:1.18.30'
+    annotationProcessor 'org.projectlombok:lombok:1.18.30'
 
     testImplementation 'junit:junit:4.13.1'
 
@@ -37,8 +37,9 @@ dependencies {
 }
 
 configurations {
-    all*.exclude group: 'ch.qos.logback'
-    all*.exclude group: 'org.slf4j', module: 'log4j-over-slf4j'
+    all {
+        exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+    }
 }
 
 test {

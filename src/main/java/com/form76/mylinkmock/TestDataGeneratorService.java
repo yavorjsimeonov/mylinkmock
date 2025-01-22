@@ -9,6 +9,8 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbookType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.FileOutputStream;
@@ -20,9 +22,10 @@ import java.util.*;
 
 @Service
 public class TestDataGeneratorService {
+  Logger logger = LoggerFactory.getLogger(TestDataGeneratorService.class);
 
   public static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
-  public static final String YEAR_MONTH_DATE_FORMAT = "yyyy-MM";
+  public static final String YEAR_MONTH_DATE_FORMAT = "yyyy-MM-dd";
 
 
   public static final SimpleDateFormat SIMPLE_DATE_FORMAT_FOR_FILE_NAME = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -37,15 +40,18 @@ public class TestDataGeneratorService {
   static Random random = new Random();
 
   public DoorOpeningLog generateDoorOpeningLog(String startDateStr, String endDateStr) throws ParseException {
+    logger.info("\nReceived report generation request for dates: startDate[" + startDateStr + "], endDate[" + endDateStr + "]");
+
     // Mock data generation logic
     Date startDate = SIMPLE_DATE_FORMAT_FOR_DATA.parse(startDateStr);
     Date endDate = SIMPLE_DATE_FORMAT_FOR_DATA.parse(endDateStr);
 
-    int numberOfEmployees = random.nextInt(5, 15);
+    int numberOfEmployees = random.nextInt(5, 10);
 
     Map<DoorEvent, Employee> doorEventsToEmployeeMap = getEmployeesDoorEventsFor(startDate, endDate, numberOfEmployees);
     List<DoorEvent> eventList = getOrderedDoorEventsList(doorEventsToEmployeeMap);
 
+    logger.info("Generated eventList:" + eventList);
     // Create Data object
     return new DoorOpeningLog(eventList.size(), 1, eventList);
   }
@@ -137,7 +143,7 @@ public class TestDataGeneratorService {
   }
 
 
-  private static Map<String, Map<String, Employee>> generateEmployees(Date startDate, Date endDate, int numberOfEmployees) throws ParseException {
+  public static Map<String, Map<String, Employee>> generateEmployees(Date startDate, Date endDate, int numberOfEmployees) throws ParseException {
     Map<String, Map<String, Employee>> dateEmployeeMap = new HashMap<>();
 
     Calendar calendar = Calendar.getInstance();
