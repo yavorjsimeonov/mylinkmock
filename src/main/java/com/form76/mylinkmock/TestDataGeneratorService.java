@@ -192,8 +192,10 @@ public class TestDataGeneratorService {
     calendar.setTime(date);
 
     int numberOfEvents = 4;; // You can randomize if needed
+    int lastHour = 0;
     for (int i = 0; i < numberOfEvents; i++) {
-      int hour = random.nextInt(0, 24);
+      int hour = random.nextInt(lastHour, Math.min(lastHour + 6, 24));
+      lastHour = hour;
       int minute = random.nextInt(0, 60);
 
       calendar.set(Calendar.HOUR_OF_DAY, hour);
