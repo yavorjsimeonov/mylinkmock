@@ -15,4 +15,12 @@ public class Employee {
   public List<DoorEvent> doorEvents = new ArrayList<>();
   public Map<String, Long> workedHoursPerDate = new HashMap<>();
 
+  public Employee copy() {
+    Employee newEmploy = new Employee();
+    newEmploy.id = this.id;
+    newEmploy.uuid = this.uuid;
+    newEmploy.names = this.names;
+    return newEmploy;
+  }
+
 }

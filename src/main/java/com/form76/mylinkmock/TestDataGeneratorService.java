@@ -26,6 +26,7 @@ public class TestDataGeneratorService {
 
   public static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
   public static final String YEAR_MONTH_DATE_FORMAT = "yyyy-MM-dd";
+  public static final String YEAR_MONTH_FORMAT = "yyyy-MM";
 
 
   public static final SimpleDateFormat SIMPLE_DATE_FORMAT_FOR_FILE_NAME = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -46,7 +47,7 @@ public class TestDataGeneratorService {
     Date startDate = SIMPLE_DATE_FORMAT_FOR_DATA.parse(startDateStr);
     Date endDate = SIMPLE_DATE_FORMAT_FOR_DATA.parse(endDateStr);
 
-    int numberOfEmployees = random.nextInt(5, 10);
+    int numberOfEmployees = 2; // random.nextInt(5, 10);
 
     Map<DoorEvent, Employee> doorEventsToEmployeeMap = getEmployeesDoorEventsFor(startDate, endDate, numberOfEmployees);
     List<DoorEvent> eventList = getOrderedDoorEventsList(doorEventsToEmployeeMap);
@@ -132,9 +133,9 @@ public class TestDataGeneratorService {
   }
 
   private static Map<DoorEvent, Employee> getEmployeesDoorEventsFor(Date startDate, Date endDate, int numberOfEmployees) throws ParseException {
-    Map<String, Map<String, Employee>> employees = generateEmployees(startDate, endDate, numberOfEmployees);
+    Map<String, Employee> employees = generateEmployees(startDate, endDate, numberOfEmployees);
     Map<DoorEvent, Employee> allEventsMap = new HashMap<>();
-    for (Employee employee : employees.values().stream().map(Map::values).flatMap(Collection::stream).toList()) {
+    for (Employee employee : employees.values()) {
       for (DoorEvent doorEvent : employee.doorEvents) {
         allEventsMap.put(doorEvent, employee);
       }
@@ -143,29 +144,32 @@ public class TestDataGeneratorService {
   }
 
 
-  public static Map<String, Map<String, Employee>> generateEmployees(Date startDate, Date endDate, int numberOfEmployees) throws ParseException {
-    Map<String, Map<String, Employee>> dateEmployeeMap = new HashMap<>();
+  public static Map<String, Employee> generateEmployees(Date startDate, Date endDate, int numberOfEmployees) throws ParseException {
+    List<Employee> employeesList = new ArrayList<>(numberOfEmployees);
+    for (int i = 0; i < numberOfEmployees; i++) {
+      employeesList.add(generateEmployee());
+    }
+
+    Map<String, Employee> employees = new HashMap<String, Employee>();
 
     Calendar calendar = Calendar.getInstance();
     calendar.setTime(startDate);
 
     while (!calendar.getTime().after(endDate)) {
       Date currentDate = calendar.getTime();
-      Map<String, Employee> employees = new HashMap<>();
-
       for (int i = 0; i < numberOfEmployees; i++) {
-        Employee employee = generateEmployee(currentDate);
+        Employee employee = employeesList.get(i);
+        employee.doorEvents.addAll(generateEventsForDate(employee, currentDate));
         employees.put(employee.uuid, employee);
       }
 
-      dateEmployeeMap.put(new SimpleDateFormat(YEAR_MONTH_DATE_FORMAT).format(currentDate), employees);
       calendar.add(Calendar.DAY_OF_MONTH, 1); // Move to the next day
     }
 
-    return dateEmployeeMap;
+    return employees;
   }
 
-  private static Employee generateEmployee(Date date) {
+  private static Employee generateEmployee() {
     int employeeId = random.nextInt(1000000, 9999999);
     long employeeUuid = random.nextLong(1000000000000L, 9999999999999L);
     boolean man = random.nextBoolean();
@@ -178,8 +182,6 @@ public class TestDataGeneratorService {
     employee.names = man ? menNames.get(indxName) + " " + menFamilies.get(indxFamilyName) :
         womenNames.get(indxName) + " " + womenFamilies.get(indxFamilyName);
 
-    employee.doorEvents.addAll(generateEventsForDate(employee, date));
-
     return employee;
   }
 
@@ -189,7 +191,7 @@ public class TestDataGeneratorService {
     Calendar calendar = Calendar.getInstance();
     calendar.setTime(date);
 
-    int numberOfEvents = 8; // You can randomize if needed
+    int numberOfEvents = 4;; // You can randomize if needed
     for (int i = 0; i < numberOfEvents; i++) {
       int hour = random.nextInt(0, 24);
       int minute = random.nextInt(0, 60);

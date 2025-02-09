@@ -13,7 +13,7 @@ public class TestDataGeneratorServiceTests {
   @Test
   public void testGenerateEmployees() throws ParseException {
     TestDataGeneratorService testDataGeneratorService = new TestDataGeneratorService();
-    DoorOpeningLog doorOpeningLog = testDataGeneratorService.generateDoorOpeningLog("2024-12-01 00:00:00", "2024-12-31 23:59:59");
+    DoorOpeningLog doorOpeningLog = testDataGeneratorService.generateDoorOpeningLog("2024-11-01 00:00:00", "2024-12-31 23:59:59");
     System.out.println(doorOpeningLog);
   }
 
